@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Logo from './Logo'
+import SocialIcon from '../SocialIcon'
 import { SOCIALS } from '../../data/socials'
 import './layout.css'
 
@@ -18,14 +19,14 @@ const COLUMNS = [
     links: [
       { to: '/creators', label: 'Creator Hub' },
       { to: '/cosplayers', label: 'Cosplayer Hub' },
-      { to: '/community', label: 'Community' },
+      { to: '/socials', label: 'Socials' },
       { to: '/store', label: 'Store' },
     ],
   },
   {
     title: 'Get Involved',
     links: [
-      { to: '/contact', label: 'Join PAC' },
+      { to: '/socials', label: 'Join PAC' },
       { to: '/contact#volunteer', label: 'Volunteer' },
       { to: '/contact#partner', label: 'Become a Partner' },
       { to: '/faq', label: 'FAQs' },
@@ -49,8 +50,9 @@ export default function Footer() {
                 rel="noreferrer"
                 className="footer__social"
                 aria-label={s.name}
+                title={s.name}
               >
-                {s.short}
+                <SocialIcon name={s.icon} size={18} />
               </a>
             ))}
           </div>

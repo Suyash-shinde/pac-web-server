@@ -20,15 +20,10 @@ export default function EventDetail() {
   const navigate = useNavigate()
 
   const [going, setGoing] = useState(false)
-  const [count, setCount] = useState(null)
+  const [count, setCount] = useState(null) // null until we have a live count; render falls back to event.rsvpCount
   const [busy, setBusy] = useState(false)
 
-  // Seed the public count from the event payload, then refine with the user's
-  // own RSVP status once we know who they are.
-  useEffect(() => {
-    if (event?.rsvpCount != null) setCount(event.rsvpCount)
-  }, [event?.rsvpCount])
-
+  // Fetch the user's RSVP status (and an authoritative count) once we know them.
   useEffect(() => {
     if (!user || !slug) return
     let active = true
@@ -74,7 +69,9 @@ export default function EventDetail() {
           {!isPast && (
             <div className="event-detail__cta">
               <Countdown date={event.date} compact />
-              <Button size="lg">Register / RSVP</Button>
+              <Button size="lg" variant={going ? 'ghost' : 'primary'} disabled={busy} onClick={toggleRsvp}>
+                {busy ? 'Saving…' : going ? '✓ You’re going (cancel)' : 'Register / RSVP'}
+              </Button>
             </div>
           )}
         </div>
@@ -87,6 +84,9 @@ export default function EventDetail() {
           <div className="info-item">
             <span>Venue</span>
             <strong>{event.venue}</strong>
+            <a href={mapsHref} target="_blank" rel="noreferrer" className="text-accent event-detail__maplink">
+              Open in Google Maps ↗
+            </a>
           </div>
           <div className="info-item">
             <span>{isPast ? 'Attendance' : 'Entry'}</span>
@@ -94,7 +94,7 @@ export default function EventDetail() {
           </div>
           <div className="info-item">
             <span>RSVPs</span>
-            <strong>{hashNum(event.slug)} going</strong>
+            <strong>{count != null ? count : event.rsvpCount || 0} going</strong>
           </div>
         </div>
 
@@ -114,7 +114,7 @@ export default function EventDetail() {
         <div className="event-detail__map">
           <iframe
             title="Event location"
-            src="https://www.google.com/maps?q=Pune&output=embed"
+            src={mapEmbed}
             loading="lazy"
           ></iframe>
         </div>

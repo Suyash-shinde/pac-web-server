@@ -3,6 +3,7 @@ import Section from '../components/ui/Section'
 import Container from '../components/ui/Container'
 import SectionHeading from '../components/ui/SectionHeading'
 import Button from '../components/ui/Button'
+import Logo from './../components/layout/Logo'
 import { Card } from '../components/ui/Card'
 import EventCard from '../components/cards/EventCard'
 import CreatorCard from '../components/cards/CreatorCard'
@@ -90,9 +91,7 @@ export default function Home() {
               <Button to="/contact">Become a Member</Button>
             </div>
           </div>
-          <div className="home-about__art" aria-hidden="true">
-            <span>PAC</span>
-          </div>
+            <Logo size="xl" wordmark={false} />
         </div>
       </Section>
 
@@ -201,7 +200,7 @@ export default function Home() {
             ))}
           </div>
           <p className="home-cta__note">
-            Prefer chat? <Link to="/community">Join our Discord &amp; WhatsApp →</Link>
+            Prefer chat? <Link to="/socials">Join our Discord &amp; WhatsApp →</Link>
           </p>
         </Card>
       </Section>

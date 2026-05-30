@@ -14,7 +14,6 @@ const LINKS = [
   { to: '/gallery', label: 'Gallery' },
   { to: '/store', label: 'Store' },
   { to: '/blog', label: 'Blog' },
-  { to: '/community', label: 'Community' },
   { to: '/contact', label: 'Contact' },
 ]
 
@@ -77,7 +76,7 @@ export default function Navbar() {
                 <Button to="/login" variant="outline" block onClick={close}>
                   Login / Sign Up
                 </Button>
-                <Button to="/contact" block onClick={close}>
+                <Button to="/socials" block onClick={close}>
                   Join PAC
                 </Button>
               </>
@@ -95,7 +94,7 @@ export default function Navbar() {
               Log in
             </Button>
           )}
-          <Button to="/contact" size="sm" className="nav__join">
+          <Button to="/socials" size="sm" className="nav__join">
             Join PAC
           </Button>
           <button

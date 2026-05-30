@@ -326,12 +326,14 @@
 /* Socials grid */
 .social-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* auto-fit + a min track keeps tiles from forcing overflow on narrow phones:
+     2 columns when they fit, dropping to 1 on very small screens. */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: var(--sp-4);
 }
 @media (min-width: 720px) {
   .social-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 .social-tile {
@@ -617,8 +619,29 @@
 
 /* ---- Member auth & account ---- */
 .auth-card {
-  max-width: 460px;
+  width: 100%;
+  max-width: 440px;
   margin-inline: auto;
+  padding: var(--sp-6);
+}
+/* The login/signup chips read as a segmented toggle, full-width on the card */
+.auth-card .filter-bar {
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-5);
+}
+.auth-card .filter-bar .chip {
+  flex: 1;
+  text-align: center;
+}
+/* Keep the form flush to the card edges on every screen */
+.auth-card .form {
+  max-width: 100%;
+  gap: var(--sp-4);
+}
+@media (max-width: 480px) {
+  .auth-card {
+    padding: var(--sp-5);
+  }
 }
 .auth-divider {
   display: flex;

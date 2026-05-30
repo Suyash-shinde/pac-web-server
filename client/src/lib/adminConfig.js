@@ -15,6 +15,7 @@ export const RESOURCES = {
       { name: 'category', label: 'Category' },
       { name: 'start_at', label: 'Date & time', type: 'datetime-local' },
       { name: 'venue', label: 'Venue' },
+      { name: 'map_url', label: 'Google Maps URL (Open in Maps)' },
       { name: 'image', label: 'Image URL' },
       { name: 'excerpt', label: 'Excerpt', type: 'textarea' },
       { name: 'price', label: 'Price' },
@@ -24,9 +25,11 @@ export const RESOURCES = {
   },
   blog: {
     label: 'Blog Posts',
+    approvable: true,
     columns: [
       { key: 'title', label: 'Title' },
       { key: 'category', label: 'Category' },
+      { key: 'status', label: 'Status' },
       { key: 'published_at', label: 'Published', type: 'date' },
     ],
     fields: [
@@ -38,14 +41,17 @@ export const RESOURCES = {
       { name: 'image', label: 'Image URL' },
       { name: 'excerpt', label: 'Excerpt', type: 'textarea' },
       { name: 'body', label: 'Body', type: 'textarea' },
+      { name: 'status', label: 'Status', type: 'select', options: ['pending', 'approved'] },
     ],
   },
   creators: {
     label: 'Creators',
+    approvable: true,
     columns: [
       { key: 'name', label: 'Name' },
       { key: 'kind', label: 'Kind' },
       { key: 'specialty', label: 'Specialty' },
+      { key: 'status', label: 'Status' },
     ],
     fields: [
       { name: 'name', label: 'Name', required: true },
@@ -58,6 +64,7 @@ export const RESOURCES = {
       { name: 'cover', label: 'Cover URL' },
       { name: 'bio', label: 'Bio', type: 'textarea' },
       { name: 'featured', label: 'Featured', type: 'checkbox' },
+      { name: 'status', label: 'Status', type: 'select', options: ['pending', 'approved'] },
     ],
   },
   products: {

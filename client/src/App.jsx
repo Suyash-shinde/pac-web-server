@@ -13,7 +13,6 @@ import Store from './pages/Store'
 import ProductDetail from './pages/ProductDetail'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
-import Community from './pages/Community'
 import Socials from './pages/Socials'
 import Contact from './pages/Contact'
 import Faq from './pages/Faq'
@@ -54,7 +53,6 @@ export default function App() {
         <Route path="store/:slug" element={<ProductDetail />} />
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:slug" element={<BlogPost />} />
-        <Route path="community" element={<Community />} />
         <Route path="socials" element={<Socials />} />
         <Route path="contact" element={<Contact />} />
         <Route path="login" element={<Login />} />

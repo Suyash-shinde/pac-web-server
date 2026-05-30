@@ -7,7 +7,6 @@ import { apiPost } from '../lib/api'
 import './pages.css'
 
 const TABS = [
-  { id: 'general', label: 'General / Join' },
   { id: 'partner', label: 'Collaboration' },
   { id: 'volunteer', label: 'Volunteer' },
 ]
@@ -51,8 +50,8 @@ function Field({ label, children }) {
 export default function Contact() {
   const initial = typeof window !== 'undefined' && window.location.hash
     ? window.location.hash.replace('#', '')
-    : 'general'
-  const [tab, setTab] = useState(TABS.some((t) => t.id === initial) ? initial : 'general')
+    : 'partner'
+  const [tab, setTab] = useState(TABS.some((t) => t.id === initial) ? initial : 'partner')
   const form = useFormState(tab)
 
   return (
@@ -90,11 +89,6 @@ export default function Contact() {
                   <input type="email" name="email" required placeholder="you@example.com" />
                 </Field>
 
-                {tab === 'general' && (
-                  <Field label="Subject">
-                    <input type="text" name="subject" placeholder="What's this about?" />
-                  </Field>
-                )}
                 {tab === 'partner' && (
                   <Field label="Organisation / Brand">
                     <input type="text" name="org" placeholder="Company or brand name" />

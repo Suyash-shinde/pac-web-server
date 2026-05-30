@@ -17,6 +17,7 @@ export default function Login() {
   const [mode, setMode] = useState('login') // 'login' | 'signup'
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const hasGoogle = Boolean(import.meta.env.VITE_GOOGLE_CLIENT_ID)
 
   // Already signed in — bounce to where they were headed.
   if (user) {
@@ -90,8 +91,12 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="auth-divider"><span>or</span></div>
-          <GoogleButton onSuccess={() => navigate(dest, { replace: true })} onError={setError} />
+          {hasGoogle && (
+            <>
+              <div className="auth-divider"><span>or</span></div>
+              <GoogleButton onSuccess={() => navigate(dest, { replace: true })} onError={setError} />
+            </>
+          )}
 
           <p className="form-note" style={{ textAlign: 'center' }}>
             <Link to="/" className="text-accent">← Back to site</Link>

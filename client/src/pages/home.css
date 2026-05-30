@@ -79,6 +79,10 @@
   gap: var(--sp-3);
   margin-top: var(--sp-5);
 }
+/* Logo used as the about-preview artwork */
+.home-about__grid .logo {
+  justify-self: center;
+}
 .home-about__art {
   display: grid;
   place-items: center;

@@ -133,7 +133,7 @@ export const GALLERY = Array.from({ length: 18 }).map((_, i) => {
 })
 
 export const FAQS = [
-  { q: 'How do I join PAC?', a: 'Hit “Join PAC” in the menu and fill out the form, or join our Discord and WhatsApp community. It is free!' },
+  { q: 'How do I join PAC?', a: 'Hit “Join PAC” in the menu to find all our social links, then join our Discord and WhatsApp community. It is free!' },
   { q: 'Are events free?', a: 'Many meetups are free. Larger events, workshops and trips may have a small ticket fee, always listed on the event page.' },
   { q: 'Do I need to cosplay to attend?', a: 'Not at all. Cosplay is welcome but never required — come as you are.' },
   { q: 'Can I volunteer?', a: 'Yes! We always need help running events. Use the volunteer form on the Contact page.' },

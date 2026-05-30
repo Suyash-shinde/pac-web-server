@@ -51,6 +51,7 @@ export default function AdminResource() {
   const [form, setForm] = useState({})
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+  const [statusFilter, setStatusFilter] = useState('all') // all | pending | approved
 
   // Plain fetch helper (no setState) — safe to call from the effect.
   const fetchRows = useCallback(() => apiGet(`/admin/${resource}`), [resource])
@@ -123,6 +124,20 @@ export default function AdminResource() {
     }
   }
 
+  const approve = async (row) => {
+    try {
+      await apiPut(`/admin/${resource}/${row.id}`, { status: 'approved' })
+      await reload()
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  const visibleRows = config.approvable && statusFilter !== 'all'
+    ? rows.filter((r) => (r.status || 'approved') === statusFilter)
+    : rows
+  const pendingCount = config.approvable ? rows.filter((r) => r.status === 'pending').length : 0
+
   return (
     <div className="admin-page">
       <header className="admin-page__head">
@@ -131,6 +146,21 @@ export default function AdminResource() {
       </header>
 
       {error && !editing && <p className="admin-error">{error}</p>}
+
+      {config.approvable && (
+        <div className="filter-bar">
+          {['all', 'pending', 'approved'].map((s) => (
+            <button
+              key={s}
+              className={`chip ${statusFilter === s ? 'chip--active' : ''}`}
+              onClick={() => setStatusFilter(s)}
+            >
+              {s[0].toUpperCase() + s.slice(1)}
+              {s === 'pending' && pendingCount ? ` (${pendingCount})` : ''}
+            </button>
+          ))}
+        </div>
+      )}
 
       {loading ? (
         <Spinner />
@@ -146,19 +176,22 @@ export default function AdminResource() {
               </tr>
             </thead>
             <tbody>
-              {rows.length === 0 && (
+              {visibleRows.length === 0 && (
                 <tr>
                   <td colSpan={config.columns.length + 1} className="admin-table__empty">
-                    No {config.label.toLowerCase()} yet.
+                    No {config.label.toLowerCase()} {statusFilter !== 'all' ? `(${statusFilter})` : 'yet'}.
                   </td>
                 </tr>
               )}
-              {rows.map((row) => (
+              {visibleRows.map((row) => (
                 <tr key={row.id}>
                   {config.columns.map((c) => (
                     <td key={c.key}>{displayCell(c, row[c.key])}</td>
                   ))}
                   <td className="admin-table__actions">
+                    {config.approvable && row.status === 'pending' && (
+                      <button className="admin-link" onClick={() => approve(row)}>Approve</button>
+                    )}
                     <button className="admin-link" onClick={() => openEdit(row)}>Edit</button>
                     <button className="admin-link admin-link--danger" onClick={() => remove(row)}>Delete</button>
                   </td>

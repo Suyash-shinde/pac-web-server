@@ -1,16 +1,18 @@
 import { Link } from 'react-router-dom'
+import logo from '../../assets/logo.png'
 import './layout.css'
 
-/** PAC wordmark logo (text-based, matches red/silver brand). */
-export default function Logo({ size = 'md' }) {
+/** PAC club logo: image badge + stacked "Pune Anime / Community" wordmark. */
+export default function Logo({ size = 'md', wordmark = true }) {
   return (
     <Link to="/" className={`logo logo--${size}`} aria-label="Pune Anime Community home">
-      <span className="logo__mark" aria-hidden="true">
-        PAC
-      </span>
-      <span className="logo__text">
-        Pune Anime <span className="logo__accent">Community</span>
-      </span>
+      <img src={logo} alt="Pune Anime Community" className="logo__img" />
+      {wordmark && (
+        <span className="logo__text">
+          <span className="logo__text-top">Pune Anime</span>
+          <span className="logo__text-bottom">Community</span>
+        </span>
+      )}
     </Link>
   )
 }
