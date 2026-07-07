@@ -86,6 +86,16 @@ router.put(
 // ---- RSVP (members) ----
 router.get('/events/:slug/rsvp', requireAuth, rsvps.status)
 router.post('/events/:slug/rsvp', requireAuth, rsvps.toggle)
+router.post(
+  '/events/:slug/register',
+  requireAuth,
+  [
+    body('name').trim().notEmpty().withMessage('Name is required'),
+    body('email').trim().isEmail().withMessage('Valid email is required'),
+  ],
+  validate,
+  rsvps.register
+)
 router.get('/me/rsvps', requireAuth, rsvps.mine)
 
 // ---- Member submissions (pending admin approval) ----

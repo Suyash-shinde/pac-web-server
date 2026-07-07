@@ -20,10 +20,18 @@ exports.status = asyncHandler(async (req, res) => {
     'SELECT id FROM rsvps WHERE event_id = ? AND user_id = ? LIMIT 1',
     [eventId, req.user.id]
   )
-  res.json({ going: mine.length > 0, count: await countFor(eventId) })
+  const [reg] = await pool.query(
+    'SELECT name, email, phone, data FROM event_registrations WHERE event_id = ? AND user_id = ? LIMIT 1',
+    [eventId, req.user.id]
+  )
+  const registration = reg.length
+    ? { ...reg[0], data: typeof reg[0].data === 'string' ? JSON.parse(reg[0].data || '{}') : reg[0].data || {} }
+    : null
+  res.json({ going: mine.length > 0, count: await countFor(eventId), registration })
 })
 
 // POST /events/:slug/rsvp — toggle the current user's RSVP.
+// Cancelling also removes their registration details for the event.
 exports.toggle = asyncHandler(async (req, res) => {
   const eventId = await eventIdBySlug(req.params.slug)
   if (!eventId) return res.status(404).json({ error: 'Event not found' })
@@ -34,12 +42,35 @@ exports.toggle = asyncHandler(async (req, res) => {
   let going
   if (existing.length) {
     await pool.query('DELETE FROM rsvps WHERE id = ?', [existing[0].id])
+    await pool.query('DELETE FROM event_registrations WHERE event_id = ? AND user_id = ?', [eventId, req.user.id])
     going = false
   } else {
     await pool.query('INSERT INTO rsvps (user_id, event_id) VALUES (?, ?)', [req.user.id, eventId])
     going = true
   }
   res.json({ going, count: await countFor(eventId) })
+})
+
+// POST /events/:slug/register — save the sign-up form and RSVP the user.
+// Re-submitting updates the stored details (upsert on user+event).
+exports.register = asyncHandler(async (req, res) => {
+  const eventId = await eventIdBySlug(req.params.slug)
+  if (!eventId) return res.status(404).json({ error: 'Event not found' })
+
+  const { name, email, phone = null, data = {} } = req.body
+  await pool.query(
+    `INSERT INTO event_registrations (event_id, user_id, name, email, phone, data)
+     VALUES (?, ?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE name = VALUES(name), email = VALUES(email),
+       phone = VALUES(phone), data = VALUES(data)`,
+    [eventId, req.user.id, name, email, phone, JSON.stringify(data ?? {})]
+  )
+  // Registering implies going: ensure an RSVP row exists (idempotent).
+  await pool.query(
+    'INSERT IGNORE INTO rsvps (user_id, event_id) VALUES (?, ?)',
+    [req.user.id, eventId]
+  )
+  res.status(201).json({ going: true, registered: true, count: await countFor(eventId) })
 })
 
 // GET /me/rsvps — events the current user has RSVP'd to (for the account page).

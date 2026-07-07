@@ -25,4 +25,7 @@ for (const [path, ctrl] of [
   router.delete(`/${path}/:id`, ctrl.remove)
 }
 
+// Registrations collected by an event's sign-up modal.
+router.get('/events/:id/registrations', a.eventRegistrations)
+
 module.exports = router

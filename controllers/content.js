@@ -14,12 +14,26 @@ const mapEvent = (r) => ({
   excerpt: r.excerpt,
   price: r.price,
   attendance: r.attendance,
+  isPast: Boolean(Number(r.is_past)),
+  signupFields: parseJson(r.signup_fields, []),
   rsvpCount: r.rsvp_count != null ? Number(r.rsvp_count) : 0,
 })
+
+// JSON columns come back as strings (mysql2) or already-parsed values.
+const parseJson = (v, fallback) => {
+  if (v == null) return fallback
+  if (typeof v !== 'string') return v
+  try {
+    return JSON.parse(v)
+  } catch {
+    return fallback
+  }
+}
 
 const mapCreator = (r) => ({
   slug: r.slug,
   name: r.name,
+  kind: r.kind,
   specialty: r.specialty,
   level: r.level || undefined,
   commissions: r.commissions || undefined,
@@ -59,13 +73,16 @@ exports.getEvent = asyncHandler(async (req, res) => {
   res.json(mapEvent(rows[0]))
 })
 
-// ---- Creators / Cosplayers ----
+// ---- Creators (includes cosplayers, distinguished by `kind`) ----
+// Cosplayers were merged into the Creator Hub. /creators returns both kinds;
+// the legacy /cosplayers path still filters to cosplayers only.
 exports.listCreators = asyncHandler(async (req, res) => {
-  const kind = req.path.includes('cosplayer') ? 'cosplayer' : 'creator'
+  const onlyCosplayers = req.path.includes('cosplayer')
   // Only approved entries are public, and they're shown in random order.
   const [rows] = await pool.query(
-    "SELECT * FROM creators WHERE kind = ? AND status = 'approved' ORDER BY RAND()",
-    [kind]
+    onlyCosplayers
+      ? "SELECT * FROM creators WHERE kind = 'cosplayer' AND status = 'approved' ORDER BY RAND()"
+      : "SELECT * FROM creators WHERE status = 'approved' ORDER BY RAND()"
   )
   res.json(rows.map(mapCreator))
 })

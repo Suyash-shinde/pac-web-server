@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS events (
   price       VARCHAR(60),
   attendance  INT,
   is_past     TINYINT(1)   NOT NULL DEFAULT 0,
+  signup_fields JSON,       -- admin-configured extra registration fields
   created_at  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -149,9 +150,25 @@ CREATE TABLE IF NOT EXISTS rsvps (
   UNIQUE KEY uniq_user_event (user_id, event_id)
 );
 
+-- Event registrations: the sign-up modal's submitted details. One row per
+-- (user, event). name/email/phone are the fixed fields; `data` holds the
+-- answers to the event's admin-configured extra fields.
+CREATE TABLE IF NOT EXISTS event_registrations (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  event_id    INT NOT NULL,
+  user_id     INT NOT NULL,
+  name        VARCHAR(120) NOT NULL,
+  email       VARCHAR(180) NOT NULL,
+  phone       VARCHAR(30),
+  data        JSON,
+  created_at  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_reg_user_event (event_id, user_id)
+);
+
 -- ---- Idempotent upgrades for existing databases ----
 -- Re-running this file adds any columns introduced after the initial schema.
 ALTER TABLE events      ADD COLUMN IF NOT EXISTS map_url VARCHAR(500) AFTER venue;
+ALTER TABLE events      ADD COLUMN IF NOT EXISTS signup_fields JSON AFTER is_past;
 ALTER TABLE creators    ADD COLUMN IF NOT EXISTS status ENUM('pending','approved') NOT NULL DEFAULT 'approved';
 ALTER TABLE creators    ADD COLUMN IF NOT EXISTS submitted_by INT;
 ALTER TABLE blog_posts  ADD COLUMN IF NOT EXISTS status ENUM('pending','approved') NOT NULL DEFAULT 'approved';

@@ -50,9 +50,25 @@ function crud(table, columns, { jsonColumns = [] } = {}) {
   }
 }
 
-exports.events = crud('events', [
-  'slug', 'title', 'category', 'start_at', 'venue', 'map_url', 'image', 'excerpt', 'price', 'attendance', 'is_past',
-])
+exports.events = crud(
+  'events',
+  ['slug', 'title', 'category', 'start_at', 'venue', 'map_url', 'image', 'excerpt', 'price', 'attendance', 'is_past', 'signup_fields'],
+  { jsonColumns: ['signup_fields'] }
+)
+
+// GET /admin/events/:id/registrations — everyone signed up for an event.
+exports.eventRegistrations = asyncHandler(async (req, res) => {
+  const [rows] = await pool.query(
+    'SELECT id, name, email, phone, data, created_at FROM event_registrations WHERE event_id = ? ORDER BY created_at DESC',
+    [req.params.id]
+  )
+  res.json(
+    rows.map((r) => ({
+      ...r,
+      data: typeof r.data === 'string' ? JSON.parse(r.data || '{}') : r.data || {},
+    }))
+  )
+})
 
 exports.blog = crud('blog_posts', [
   'slug', 'title', 'category', 'author', 'published_at', 'image', 'excerpt', 'body', 'status',
